@@ -1,0 +1,1292 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Diyan's Candle Co. — Handcrafted Pure Soy & Gel Wax Candles</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cormorant Garamond for Luxury Serif Headings & Plus Jakarta Sans for Clean UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAF7F2',
+            sand: '#F2EBE1',
+            terracotta: '#C87D55',
+            amberGold: '#D4A373',
+            charcoal: '#2B2623',
+            warmGray: '#6E655F',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 30px -10px rgba(43, 38, 35, 0.08)',
+            'float': '0 14px 34px -6px rgba(200, 125, 85, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Smooth scrolling and mobile-app feel */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #EFEAE2;
+      color: #2B2623;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    /* Hide scrollbar for clean horizontal pills */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Subtle candle flame flicker animation */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+      50% { transform: scale(1.06) rotate(1.5deg); opacity: 1; }
+    }
+    .flame-glow {
+      transform-origin: center bottom;
+      animation: flicker 2.4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center items-start">
+
+  <!-- Mobile App Shell Container (Full width on mobile, centered app frame on desktop) -->
+  <div id="app-shell" class="w-full max-w-md min-h-screen bg-cream relative shadow-2xl flex flex-col overflow-x-hidden pb-28">
+
+    <!-- Top Sticky App Header -->
+    <header class="sticky top-0 z-30 bg-cream/95 backdrop-blur-md border-b border-amberGold/20 px-4 py-3.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <!-- Minimalist Brand Flame Emblem -->
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-terracotta to-amberGold flex items-center justify-center text-white shadow-sm shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C12 2 7 7.5 7 12.5C7 15.2614 9.23858 17.5 12 17.5C14.7614 17.5 17 15.2614 17 12.5C17 7.5 12 2 12 2Z" fill="rgba(255,255,255,0.25)"/>
+            <path d="M9 21H15M12 17.5V21" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="font-serif text-xl font-bold leading-tight text-charcoal truncate">Diyan's Candle Co.</h1>
+          <p class="text-[11px] text-warmGray font-medium truncate">Pure Soy &amp; Gel Wax Candles</p>
+        </div>
+      </div>
+
+      <!-- Manage Products Mode Toggle -->
+      <button
+        id="toggle-admin-btn"
+        type="button"
+        onclick="toggleAdminMode()"
+        class="px-3 py-2 rounded-xl text-xs font-semibold border border-terracotta/30 bg-sand/70 text-charcoal hover:bg-terracotta hover:text-white transition-all flex items-center gap-1.5 shrink-0"
+      >
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="admin-btn-label">Manage</span>
+      </button>
+    </header>
+
+    <!-- Toast Notification Banner (Replaces alert) -->
+    <div id="toast-banner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+      <div id="toast-content" class="bg-charcoal text-cream px-4 py-3 rounded-2xl shadow-xl text-xs font-medium flex items-center justify-between gap-2 border border-amberGold/30">
+        <span id="toast-message">Action completed</span>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 px-4 pt-4">
+
+      <!-- Artisanal Hero Banner -->
+      <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#352C27] via-[#4A382E] to-[#7D4F38] text-cream p-5 mb-5 shadow-soft">
+        <div class="relative z-10 max-w-[75%]">
+          <span class="inline-block px-2.5 py-0.5 rounded-full bg-amberGold/20 text-amberGold text-[10px] font-semibold tracking-wider uppercase mb-2">
+            Hand-Poured in Small Batches
+          </span>
+          <h2 class="font-serif text-2xl font-bold leading-snug mb-1.5">
+            Warm Glow for Every Corner
+          </h2>
+          <p class="text-xs text-cream/80 leading-relaxed mb-3">
+            Handcrafted Pure Soy &amp; Gel Wax Candles with clean-burning cotton wicks.
+          </p>
+          <button
+            type="button"
+            onclick="document.getElementById('catalog-section').scrollIntoView({ behavior: 'smooth' })"
+            class="px-4 py-2 rounded-xl bg-terracotta hover:bg-amberGold text-white text-xs font-semibold transition-colors shadow-sm"
+          >
+            Explore Collection
+          </button>
+        </div>
+        <!-- Decorative SVG Glow -->
+        <svg class="w-28 h-28 absolute -right-3 -bottom-3 text-amberGold/25" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <path d="M50 18C50 18 34 36 34 52C34 60.8 41.2 68 50 68C58.8 68 66 60.8 66 52C66 36 50 18 50 18Z" fill="currentColor"/>
+        </svg>
+      </section>
+
+      <!-- Admin / Quick Product Manager Panel (Hidden by default) -->
+      <section id="admin-panel" class="hidden mb-6 rounded-3xl bg-white border-2 border-terracotta/40 p-4 shadow-soft">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-sand">
+          <div>
+            <h3 class="font-serif text-lg font-bold text-charcoal">Catalog Manager</h3>
+            <p class="text-[11px] text-warmGray">Add new candles or edit existing prices</p>
+          </div>
+          <button
+            type="button"
+            onclick="resetDefaultProducts()"
+            class="text-[11px] font-semibold text-terracotta underline px-2 py-1"
+          >
+            Reset Defaults
+          </button>
+        </div>
+
+        <!-- Add / Edit Candle Form -->
+        <form id="product-form" onsubmit="handleSaveProduct(event)" class="space-y-3">
+          <input type="hidden" id="edit-product-id" value="" />
+          <div>
+            <label class="block text-[11px] font-semibold text-warmGray mb-1">Candle Name *</label>
+            <input
+              type="text"
+              id="prod-name"
+              required
+              placeholder="e.g., Rose Petal Soy Jar Candle"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Category *</label>
+              <select
+                id="prod-category"
+                class="w-full px-3 py-2.5 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              >
+                <option value="Heart & Shell">Heart &amp; Shell</option>
+                <option value="Floating & Urli">Floating &amp; Urli</option>
+                <option value="Jar Candles">Jar Candles</option>
+                <option value="Gift Sets">Gift Sets</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Price (₹) *</label>
+              <input
+                type="number"
+                id="prod-price"
+                required
+                min="1"
+                placeholder="349"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Art Style</label>
+              <select
+                id="prod-art"
+                class="w-full px-3 py-2.5 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              >
+                <option value="heart">Multi-Wick Heart</option>
+                <option value="shell">Pearl Conch Shell</option>
+                <option value="floating">Floating Flowers</option>
+                <option value="urli">Golden Metal Urli</option>
+                <option value="boat">Oval Boat Multi-Wick</option>
+                <option value="hamper">Festive Gift Set</option>
+                <option value="jar">Classic Soy Jar</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Spec Badge</label>
+              <input
+                type="text"
+                id="prod-spec"
+                placeholder="Pure Soy • Cotton Wick"
+                value="Pure Soy • Cotton Wick"
+                class="w-full px-3 py-2.5 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-warmGray mb-1">Description *</label>
+            <textarea
+              id="prod-desc"
+              rows="2"
+              required
+              placeholder="Handcrafted pure soy wax candle with cotton wick..."
+              class="w-full px-3.5 py-2 rounded-xl bg-cream border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+            ></textarea>
+          </div>
+
+          <div class="flex gap-2 pt-1">
+            <button
+              type="submit"
+              id="save-prod-btn"
+              class="flex-1 py-2.5 rounded-xl bg-terracotta text-white text-xs font-bold hover:bg-charcoal transition-colors"
+            >
+              + Add Candle to Catalog
+            </button>
+            <button
+              type="button"
+              id="cancel-edit-btn"
+              onclick="resetProductForm()"
+              class="hidden px-4 py-2.5 rounded-xl bg-sand text-charcoal text-xs font-semibold"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Search & Filter Section -->
+      <section id="catalog-section" class="mb-4">
+        <!-- Search Input -->
+        <div class="relative mb-3">
+          <svg class="w-4 h-4 text-warmGray absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            oninput="handleSearch(this.value)"
+            placeholder="Search soy candles, urli, shell, gift sets..."
+            class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-amberGold/25 text-sm placeholder:text-warmGray/70 focus:outline-none focus:border-terracotta shadow-sm"
+          />
+        </div>
+
+        <!-- Category Pills -->
+        <div id="category-pills" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- Product Grid Header -->
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="catalog-heading" class="font-serif text-xl font-bold text-charcoal">All Handcrafted Candles</h3>
+        <span id="product-count" class="text-xs font-medium text-warmGray">6 items</span>
+      </div>
+
+      <!-- Product Cards Grid -->
+      <section id="product-grid" class="grid grid-cols-2 gap-3.5 pb-6">
+        <!-- Product cards injected via JS -->
+      </section>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-12 px-4 bg-white rounded-3xl border border-amberGold/20">
+        <p class="font-serif text-lg font-bold text-charcoal mb-1">No candles found</p>
+        <p class="text-xs text-warmGray mb-3">Try clearing your search or switching category filters.</p>
+        <button
+          type="button"
+          onclick="clearFilters()"
+          class="px-4 py-2 rounded-xl bg-terracotta text-white text-xs font-semibold"
+        >
+          Show All Candles
+        </button>
+      </div>
+
+      <!-- Footer Brand Info -->
+      <footer class="mt-4 pt-5 border-t border-amberGold/20 text-center text-xs text-warmGray pb-4">
+        <p class="font-serif text-base font-bold text-charcoal">Diyan's Candle Co.</p>
+        <p class="mt-0.5">Handcrafted Pure Soy &amp; Gel Wax Candles</p>
+        <p class="mt-1 text-[11px] opacity-80">Custom bulk &amp; festive orders available via WhatsApp</p>
+      </footer>
+    </main>
+
+    <!-- Floating Bottom Cart Bar -->
+    <div id="floating-cart-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-[416px] transition-all duration-300">
+      <button
+        type="button"
+        onclick="openCartModal()"
+        class="w-full bg-charcoal hover:bg-[#3A332F] text-cream px-4 py-3.5 rounded-2xl shadow-float flex items-center justify-between border border-amberGold/30 active:scale-[0.99] transition-transform"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-terracotta flex items-center justify-center font-bold text-sm text-white relative">
+            <span id="cart-badge-count">0</span>
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-semibold text-cream">Your Candle Order</p>
+            <p id="cart-bar-subtitle" class="text-[11px] text-amberGold">Tap to review &amp; send on WhatsApp</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="cart-bar-total" class="font-bold text-base text-white">₹0</span>
+          <svg class="w-4 h-4 text-amberGold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 z-40 hidden bg-charcoal/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-cream w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col animate-slide-up">
+        <!-- Close Button -->
+        <div class="relative">
+          <button
+            type="button"
+            onclick="closeProductModal()"
+            aria-label="Close details"
+            class="absolute top-3.5 right-3.5 z-10 w-9 h-9 rounded-full bg-white/90 text-charcoal flex items-center justify-center shadow-md hover:bg-white"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <!-- Bespoke SVG Art Header -->
+          <div id="modal-art-container" class="w-full h-56 flex items-center justify-center p-6">
+            <!-- SVG Injected Here -->
+          </div>
+        </div>
+
+        <div class="p-5 overflow-y-auto flex-1">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span id="modal-category" class="px-2.5 py-0.5 rounded-full bg-sand text-terracotta text-[11px] font-semibold">
+              Category
+            </span>
+            <span id="modal-spec" class="text-[11px] font-medium text-warmGray">
+              Pure Soy • Cotton Wick
+            </span>
+          </div>
+
+          <h3 id="modal-title" class="font-serif text-2xl font-bold text-charcoal leading-snug mb-1">
+            Candle Name
+          </h3>
+          <p id="modal-price" class="text-xl font-bold text-terracotta mb-3">₹349</p>
+
+          <p id="modal-desc" class="text-xs text-warmGray leading-relaxed mb-4">
+            Detailed candle description goes here.
+          </p>
+
+          <!-- Artisanal Highlights -->
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="p-2.5 rounded-2xl bg-white border border-amberGold/20">
+              <p class="text-[10px] uppercase tracking-wider text-warmGray font-semibold">Wax Blend</p>
+              <p id="modal-wax-info" class="text-xs font-bold text-charcoal mt-0.5">100% Pure Soy Wax</p>
+            </div>
+            <div class="p-2.5 rounded-2xl bg-white border border-amberGold/20">
+              <p class="text-[10px] uppercase tracking-wider text-warmGray font-semibold">Wick Type</p>
+              <p class="text-xs font-bold text-charcoal mt-0.5">Braided Cotton Wick</p>
+            </div>
+          </div>
+
+          <!-- Quantity & Add Button -->
+          <div class="flex items-center gap-3">
+            <div class="flex items-center bg-white border border-amberGold/30 rounded-2xl p-1">
+              <button
+                type="button"
+                onclick="changeModalQty(-1)"
+                class="w-9 h-9 rounded-xl flex items-center justify-center text-charcoal font-bold hover:bg-sand"
+              >−</button>
+              <span id="modal-qty" class="w-8 text-center font-bold text-sm">1</span>
+              <button
+                type="button"
+                onclick="changeModalQty(1)"
+                class="w-9 h-9 rounded-xl flex items-center justify-center text-charcoal font-bold hover:bg-sand"
+              >+</button>
+            </div>
+
+            <button
+              type="button"
+              id="modal-add-btn"
+              onclick="addModalItemToCart()"
+              class="flex-1 py-3.5 px-4 rounded-2xl bg-terracotta hover:bg-charcoal text-white font-bold text-sm transition-colors shadow-sm"
+            >
+              Add to Order • ₹349
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart & WhatsApp Order Checkout Drawer/Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-40 hidden bg-charcoal/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-cream w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] flex flex-col overflow-hidden">
+        <!-- Drawer Header -->
+        <div class="px-5 py-4 bg-white border-b border-sand flex items-center justify-between">
+          <div>
+            <h3 class="font-serif text-xl font-bold text-charcoal">Your Candle Order</h3>
+            <p class="text-[11px] text-warmGray">Review items &amp; send directly on WhatsApp</p>
+          </div>
+          <button
+            type="button"
+            onclick="closeCartModal()"
+            class="w-9 h-9 rounded-full bg-sand/70 text-charcoal flex items-center justify-center hover:bg-sand"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Drawer Scrollable Body -->
+        <div class="p-5 overflow-y-auto flex-1 space-y-5">
+          <!-- Selected Cart Items List -->
+          <div id="cart-items-container" class="space-y-2.5">
+            <!-- Injected via JS -->
+          </div>
+
+          <!-- Order Summary Card -->
+          <div id="cart-summary-box" class="hidden bg-white rounded-2xl p-4 border border-amberGold/25 space-y-2">
+            <div class="flex justify-between text-xs text-warmGray">
+              <span>Subtotal</span>
+              <span id="summary-subtotal">₹0</span>
+            </div>
+            <div class="flex justify-between text-xs text-warmGray">
+              <span>Packaging</span>
+              <span class="text-emerald-700 font-medium">Artisanal Safe Wrap Included</span>
+            </div>
+            <div class="pt-2 border-t border-sand flex justify-between items-center">
+              <span class="font-bold text-sm text-charcoal">Estimated Total</span>
+              <span id="summary-total" class="font-bold text-lg text-terracotta">₹0</span>
+            </div>
+          </div>
+
+          <!-- Customer Details Form for WhatsApp -->
+          <div id="checkout-form-box" class="hidden space-y-3">
+            <h4 class="font-serif text-lg font-bold text-charcoal">Delivery &amp; Contact Details</h4>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Your Name *</label>
+              <input
+                type="text"
+                id="cust-name"
+                placeholder="Enter your full name"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Phone / WhatsApp Number *</label>
+              <input
+                type="tel"
+                id="cust-phone"
+                placeholder="e.g., 98765 43210"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Delivery City &amp; Address *</label>
+              <textarea
+                id="cust-address"
+                rows="2"
+                placeholder="House/Flat No., Area, City, Pincode"
+                class="w-full px-3.5 py-2 rounded-xl bg-white border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-warmGray mb-1">Custom Note / Fragrance Preference (Optional)</label>
+              <input
+                type="text"
+                id="cust-note"
+                placeholder="e.g., Gift message, color preference..."
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-amberGold/30 text-sm focus:outline-none focus:border-terracotta"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawer Footer Actions -->
+        <div id="cart-footer-actions" class="hidden p-4 bg-white border-t border-sand space-y-2">
+          <button
+            type="button"
+            onclick="sendOrderOnWhatsApp()"
+            class="w-full py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-colors"
+          >
+            <!-- WhatsApp SVG Icon -->
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+            </svg>
+            <span>Send Order on WhatsApp</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="copyOrderSummary()"
+            class="w-full py-2.5 px-4 rounded-xl bg-sand/70 hover:bg-sand text-charcoal font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <svg class="w-4 h-4 text-warmGray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span>Copy Order Text (Fallback)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DEFAULT CATALOG DATA & BESPOKE SVG ARTWORKS
+    // =========================================================================
+    const WHATSAPP_NUMBER = '919924472228';
+    const STORAGE_KEY_PRODUCTS = 'diyans_candle_products_v1';
+    const STORAGE_KEY_CART = 'diyans_candle_cart_v1';
+
+    const CATEGORIES = ['All', 'Heart & Shell', 'Floating & Urli', 'Jar Candles', 'Gift Sets'];
+
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 'candle-heart-1',
+        name: 'Multi-Wick Heart Soy Candle',
+        category: 'Heart & Shell',
+        price: 349,
+        art: 'heart',
+        spec: 'Pure Soy Wax • Cotton Wick',
+        waxType: '100% Pure Soy Wax',
+        description: 'Hand-poured heart-shaped pure soy wax candle featuring dual braided cotton wicks for an even, warm, and long-lasting romantic glow.'
+      },
+      {
+        id: 'candle-shell-2',
+        name: 'Pearl Conch Shell Gel Candle',
+        category: 'Heart & Shell',
+        price: 399,
+        art: 'shell',
+        spec: 'Crystal Gel Wax • Cotton Wick',
+        waxType: 'Pure Gel & Soy Blend',
+        description: 'Ocean-inspired conch shell candle crafted with translucent gel wax, shimmering embedded pearls, and a clean-burning cotton wick.'
+      },
+      {
+        id: 'candle-floating-3',
+        name: 'Floating Daisy & Peony Wax Candles - Set of 4',
+        category: 'Floating & Urli',
+        price: 249,
+        art: 'floating',
+        spec: 'Pure Soy Wax • Set of 4',
+        waxType: '100% Pure Soy Wax',
+        description: 'Delicate multi-color floral daisy and peony floating candles designed for water bowls, festive decor, and serene table centerpieces.'
+      },
+      {
+        id: 'candle-urli-4',
+        name: 'Golden Petal Metal Urli Candle',
+        category: 'Floating & Urli',
+        price: 499,
+        art: 'urli',
+        spec: 'Metal Container • Cotton Wick',
+        waxType: 'Pure Soy Wax',
+        description: 'Traditional hammered golden metal urli filled with scented pure soy wax, botanical petal accents, and multiple cotton wicks.'
+      },
+      {
+        id: 'candle-boat-5',
+        name: 'Oval Boat-Shaped Multi-Wick Candle',
+        category: 'Jar Candles',
+        price: 449,
+        art: 'boat',
+        spec: 'Multi-Cotton Wick • Handcrafted',
+        waxType: '100% Pure Soy Wax',
+        description: 'Elegant artisanal oval boat-shaped container poured with creamy soy wax and triple cotton wicks for wide fragrance throw.'
+      },
+      {
+        id: 'candle-hamper-6',
+        name: 'Festive Candle Gift Hamper',
+        category: 'Gift Sets',
+        price: 699,
+        art: 'hamper',
+        spec: 'Assorted Soy Candles • Gift Box',
+        waxType: 'Pure Soy & Gel Wax',
+        description: 'Curated luxury gift box featuring assorted handcrafted soy jar, floating floral, and sculpted candles with cotton wicks.'
+      }
+    ];
+
+    // State Variables
+    let products = [];
+    let cart = {}; // { productId: quantity }
+    let selectedCategory = 'All';
+    let searchQuery = '';
+    let isAdminMode = false;
+    let activeModalProduct = null;
+    let activeModalQty = 1;
+
+    // =========================================================================
+    // 2. BESPOKE SVG ARTWORK GENERATOR FOR EACH CANDLE TYPE
+    // =========================================================================
+    function getCandleArtworkSVG(artType, isLarge = false) {
+      const sizeClass = isLarge ? 'w-44 h-44' : 'w-28 h-28';
+      switch (artType) {
+        case 'heart':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#F9ECE4] to-[#EED5C5] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <ellipse cx="70" cy="116" rx="44" ry="8" fill="#C87D55" fill-opacity="0.2"/>
+                <path d="M70 112C70 112 24 84 24 52C24 37 35 27 48 27C57 27 65 32 70 39C75 32 83 27 92 27C105 27 116 37 116 52C116 84 70 112 70 112Z" fill="#FFFDF9" stroke="#D4A373" stroke-width="2.5"/>
+                <path d="M70 105C70 105 31 80 31 53C31 42 39 34 49 34C57 34 64 38 70 45C76 38 83 34 91 34C101 34 109 42 109 53C109 80 70 105 70 105Z" fill="#F6E5D8"/>
+                <!-- Dual Cotton Wicks & Flames -->
+                <line x1="54" y1="62" x2="54" y2="52" stroke="#4A382E" stroke-width="2.5" stroke-linecap="round"/>
+                <path class="flame-glow" d="M54 36C54 36 48 44 48 48.5C48 51.8 50.7 54 54 54C57.3 54 60 51.8 60 48.5C60 44 54 36 54 36Z" fill="#F59E0B"/>
+                <line x1="86" y1="62" x2="86" y2="52" stroke="#4A382E" stroke-width="2.5" stroke-linecap="round"/>
+                <path class="flame-glow" d="M86 36C86 36 80 44 80 48.5C80 51.8 82.7 54 86 54C89.3 54 92 51.8 92 48.5C92 44 86 36 86 36Z" fill="#F59E0B"/>
+              </svg>
+            </div>`;
+        case 'shell':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#EAF3F5] to-[#D8E7EC] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <ellipse cx="70" cy="116" rx="45" ry="8" fill="#5B8591" fill-opacity="0.2"/>
+                <!-- Conch Shell Base -->
+                <path d="M28 84C26 62 45 42 72 42C99 42 116 60 112 82C108 100 90 108 70 108C48 108 30 98 28 84Z" fill="#FFFDFB" stroke="#9DBBC4" stroke-width="2.5"/>
+                <!-- Translucent Gel Wax Pool -->
+                <ellipse cx="70" cy="76" rx="34" ry="18" fill="#BEE3EB" fill-opacity="0.65"/>
+                <!-- Embedded Pearls -->
+                <circle cx="52" cy="78" r="5" fill="#FFFFFF" stroke="#D4A373" stroke-width="1"/>
+                <circle cx="88" cy="80" r="4.5" fill="#FFFFFF" stroke="#D4A373" stroke-width="1"/>
+                <circle cx="62" cy="86" r="3.5" fill="#FFFFFF"/>
+                <circle cx="79" cy="71" r="3.5" fill="#FFFFFF"/>
+                <!-- Cotton Wick & Flame -->
+                <line x1="70" y1="74" x2="70" y2="62" stroke="#4A382E" stroke-width="2.5" stroke-linecap="round"/>
+                <path class="flame-glow" d="M70 43C70 43 63 52 63 57C63 60.9 66.1 64 70 64C73.9 64 77 60.9 77 57C77 52 70 43 70 43Z" fill="#F59E0B"/>
+              </svg>
+            </div>`;
+        case 'floating':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#FBF0E6] to-[#F3DEC9] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <!-- Water Ripple Base -->
+                <ellipse cx="70" cy="96" rx="52" ry="18" fill="#D8EBF0" stroke="#A6CCD6" stroke-width="1.5"/>
+                <!-- Peony Flower Candle Left -->
+                <circle cx="52" cy="84" r="18" fill="#F4A7A0"/>
+                <circle cx="52" cy="84" r="11" fill="#FAD0C9"/>
+                <line x1="52" y1="82" x2="52" y2="74" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M52 62C52 62 48 68 48 71C48 73.2 49.8 75 52 75C54.2 75 56 73.2 56 71C56 68 52 62 52 62Z" fill="#F59E0B"/>
+                <!-- Daisy Flower Candle Right -->
+                <circle cx="88" cy="88" r="16" fill="#FFFDF7" stroke="#E6D5B8" stroke-width="1.5"/>
+                <circle cx="88" cy="88" r="7" fill="#F2C14E"/>
+                <line x1="88" y1="86" x2="88" y2="78" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M88 66C88 66 84 72 84 75C84 77.2 85.8 79 88 79C90.2 79 92 77.2 92 75C92 72 88 66 88 66Z" fill="#F59E0B"/>
+              </svg>
+            </div>`;
+        case 'urli':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#F9EFE0] to-[#EAD4B0] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <ellipse cx="70" cy="115" rx="46" ry="8" fill="#8C6239" fill-opacity="0.22"/>
+                <!-- Golden Metal Urli Bowl -->
+                <path d="M24 72C24 96 42 110 70 110C98 110 116 96 116 72H24Z" fill="url(#goldGrad)" stroke="#9C6B21" stroke-width="2"/>
+                <!-- Decorative Scalloped Rim -->
+                <ellipse cx="70" cy="72" rx="46" ry="12" fill="#FFFDF7" stroke="#B68029" stroke-width="2.5"/>
+                <!-- Rose Petals & Dual Wicks -->
+                <circle cx="48" cy="72" r="4" fill="#D96B66"/>
+                <circle cx="92" cy="73" r="4" fill="#D96B66"/>
+                <line x1="58" y1="71" x2="58" y2="61" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M58 47C58 47 53 54 53 57.5C53 60.3 55.2 62.5 58 62.5C60.8 62.5 63 60.3 63 57.5C63 54 58 47 58 47Z" fill="#F59E0B"/>
+                <line x1="82" y1="71" x2="82" y2="61" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M82 47C82 47 77 54 77 57.5C77 60.3 79.2 62.5 82 62.5C84.8 62.5 87 60.3 87 57.5C87 54 82 47 82 47Z" fill="#F59E0B"/>
+                <defs>
+                  <linearGradient id="goldGrad" x1="24" y1="72" x2="116" y2="110" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#E7B95D"/>
+                    <stop offset="0.5" stop-color="#D19A36"/>
+                    <stop offset="1" stop-color="#A6741D"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>`;
+        case 'boat':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#F4EDE6] to-[#E3D4C5] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <ellipse cx="70" cy="112" rx="52" ry="7" fill="#5C4838" fill-opacity="0.2"/>
+                <!-- Oval Boat-Shaped Vessel -->
+                <path d="M16 74C22 98 44 106 70 106C96 106 118 98 124 74H16Z" fill="#8D6E53" stroke="#5E4632" stroke-width="2"/>
+                <ellipse cx="70" cy="74" rx="54" ry="12" fill="#FFFDF9" stroke="#6E523B" stroke-width="2"/>
+                <!-- Triple Cotton Wicks -->
+                <line x1="46" y1="73" x2="46" y2="63" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M46 50C46 50 42 56 42 59.5C42 61.7 43.8 63.5 46 63.5C48.2 63.5 50 61.7 50 59.5C50 56 46 50 46 50Z" fill="#F59E0B"/>
+                <line x1="70" y1="74" x2="70" y2="63" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M70 49C70 49 66 55.5 66 59C66 61.2 67.8 63 70 63C72.2 63 74 61.2 74 59C74 55.5 70 49 70 49Z" fill="#F59E0B"/>
+                <line x1="94" y1="73" x2="94" y2="63" stroke="#4A382E" stroke-width="2"/>
+                <path class="flame-glow" d="M94 50C94 50 90 56 90 59.5C90 61.7 91.8 63.5 94 63.5C96.2 63.5 98 61.7 98 59.5C98 56 94 50 94 50Z" fill="#F59E0B"/>
+              </svg>
+            </div>`;
+        case 'hamper':
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#F7EAE1] to-[#E6CCB8] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <!-- Luxury Gift Box -->
+                <rect x="28" y="54" width="84" height="56" rx="10" fill="#C87D55" stroke="#8C4F30" stroke-width="2"/>
+                <rect x="24" y="44" width="92" height="14" rx="6" fill="#D4A373" stroke="#8C4F30" stroke-width="2"/>
+                <!-- Ribbon -->
+                <rect x="64" y="44" width="12" height="66" fill="#FAF7F2"/>
+                <path d="M70 44C70 44 52 28 46 36C40 44 64 44 70 44Z" fill="#FAF7F2" stroke="#8C4F30" stroke-width="1.5"/>
+                <path d="M70 44C70 44 88 28 94 36C100 44 76 44 70 44Z" fill="#FAF7F2" stroke="#8C4F30" stroke-width="1.5"/>
+              </svg>
+            </div>`;
+        default: // 'jar'
+          return `
+            <div class="w-full h-full bg-gradient-to-br from-[#F5EFE6] to-[#E5D7C3] flex items-center justify-center">
+              <svg class="${sizeClass}" viewBox="0 0 140 140" fill="none">
+                <ellipse cx="70" cy="116" rx="34" ry="7" fill="#4A382E" fill-opacity="0.18"/>
+                <rect x="42" y="52" width="56" height="60" rx="12" fill="#FFFDF9" stroke="#C87D55" stroke-width="2.5"/>
+                <rect x="48" y="68" width="44" height="28" rx="6" fill="#FAF7F2" stroke="#D4A373" stroke-width="1.2"/>
+                <line x1="70" y1="52" x2="70" y2="41" stroke="#4A382E" stroke-width="2.5" stroke-linecap="round"/>
+                <path class="flame-glow" d="M70 24C70 24 63 32 63 37C63 40.9 66.1 44 70 44C73.9 44 77 40.9 77 37C77 32 70 24 70 24Z" fill="#F59E0B"/>
+              </svg>
+            </div>`;
+      }
+    }
+
+    // =========================================================================
+    // 3. INITIALIZATION & LOCAL STORAGE SYNC
+    // =========================================================================
+    function initApp() {
+      try {
+        const savedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+        products = savedProducts ? JSON.parse(savedProducts) : [...DEFAULT_PRODUCTS];
+        if (!Array.isArray(products) || products.length === 0) {
+          products = [...DEFAULT_PRODUCTS];
+        }
+      } catch (e) {
+        products = [...DEFAULT_PRODUCTS];
+      }
+
+      try {
+        const savedCart = localStorage.getItem(STORAGE_KEY_CART);
+        cart = savedCart ? JSON.parse(savedCart) : {};
+      } catch (e) {
+        cart = {};
+      }
+
+      renderCategoryPills();
+      renderProducts();
+      updateCartUI();
+    }
+
+    function saveProductsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      } catch (e) {
+        console.warn('Storage unavailable', e);
+      }
+    }
+
+    function saveCartToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+      } catch (e) {
+        console.warn('Storage unavailable', e);
+      }
+    }
+
+    // =========================================================================
+    // 4. TOAST FEEDBACK HELPER (No alert() used)
+    // =========================================================================
+    let toastTimer = null;
+    function showToast(message) {
+      const banner = document.getElementById('toast-banner');
+      const msgEl = document.getElementById('toast-message');
+      msgEl.textContent = message;
+      banner.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+      banner.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        banner.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+        banner.classList.remove('opacity-100', 'translate-y-0');
+      }, 2600);
+    }
+
+    // =========================================================================
+    // 5. CATALOG RENDERING, SEARCH & FILTERING
+    // =========================================================================
+    function renderCategoryPills() {
+      const container = document.getElementById('category-pills');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const active = selectedCategory === cat;
+        return `
+          <button
+            type="button"
+            onclick="selectCategory('${cat}')"
+            class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              active
+                ? 'bg-terracotta text-white shadow-sm'
+                : 'bg-white text-warmGray border border-amberGold/25 hover:border-terracotta/50'
+            }"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      renderCategoryPills();
+      renderProducts();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      renderProducts();
+    }
+
+    function clearFilters() {
+      selectedCategory = 'All';
+      searchQuery = '';
+      document.getElementById('search-input').value = '';
+      renderCategoryPills();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      const emptyState = document.getElementById('empty-state');
+      const countEl = document.getElementById('product-count');
+      const headingEl = document.getElementById('catalog-heading');
+
+      const filtered = products.filter(item => {
+        const matchesCat = selectedCategory === 'All' || item.category === selectedCategory;
+        const matchesSearch =
+          !searchQuery ||
+          item.name.toLowerCase().includes(searchQuery) ||
+          item.description.toLowerCase().includes(searchQuery) ||
+          item.category.toLowerCase().includes(searchQuery);
+        return matchesCat && matchesSearch;
+      });
+
+      headingEl.textContent = selectedCategory === 'All' ? 'All Handcrafted Candles' : selectedCategory;
+      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'items'}`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const qtyInCart = cart[item.id] || 0;
+        return `
+          <article class="bg-white rounded-3xl overflow-hidden border border-amberGold/20 shadow-soft flex flex-col justify-between transition-transform duration-200 hover:-translate-y-0.5">
+            <!-- Clickable Visual + Info -->
+            <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
+              <div class="h-36 w-full relative overflow-hidden">
+                ${getCandleArtworkSVG(item.art, false)}
+                <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[10px] font-semibold text-charcoal shadow-2xs">
+                  ${item.category}
+                </span>
+              </div>
+              <div class="p-3.5 pb-2">
+                <p class="text-[10px] font-medium text-warmGray mb-0.5 truncate">${item.spec || 'Pure Soy • Cotton Wick'}</p>
+                <h4 class="font-serif text-base font-bold text-charcoal leading-snug line-clamp-2 min-h-[2.5rem]">
+                  ${item.name}
+                </h4>
+              </div>
+            </div>
+
+            <!-- Price & Action Row -->
+            <div class="px-3.5 pb-3.5 pt-1">
+              <div class="flex items-center justify-between gap-1.5">
+                <span class="font-bold text-base text-terracotta">₹${item.price}</span>
+                ${
+                  qtyInCart > 0
+                    ? `<div class="flex items-center bg-sand rounded-xl p-0.5 border border-terracotta/30">
+                        <button type="button" onclick="updateCartItem('${item.id}', -1)" class="w-7 h-7 rounded-lg font-bold text-charcoal hover:bg-white">−</button>
+                        <span class="px-2 text-xs font-bold text-charcoal">${qtyInCart}</span>
+                        <button type="button" onclick="updateCartItem('${item.id}', 1)" class="w-7 h-7 rounded-lg font-bold text-charcoal hover:bg-white">+</button>
+                      </div>`
+                    : `<button
+                        type="button"
+                        onclick="updateCartItem('${item.id}', 1)"
+                        class="px-3 py-2 rounded-xl bg-charcoal hover:bg-terracotta text-white text-xs font-semibold transition-colors"
+                      >
+                        + Add
+                      </button>`
+                }
+              </div>
+
+              <!-- Admin Quick Controls (Visible only in Manage Mode) -->
+              ${
+                isAdminMode
+                  ? `<div class="mt-2.5 pt-2 border-t border-sand flex items-center justify-between gap-1.5">
+                      <button
+                        type="button"
+                        onclick="editProduct('${item.id}')"
+                        class="flex-1 py-1.5 rounded-lg bg-amberGold/20 text-charcoal text-[11px] font-semibold hover:bg-amberGold/35"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onclick="deleteProduct('${item.id}')"
+                        class="flex-1 py-1.5 rounded-lg bg-red-50 text-red-600 text-[11px] font-semibold hover:bg-red-100"
+                      >
+                        Delete
+                      </button>
+                    </div>`
+                  : ''
+              }
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. PRODUCT DETAIL MODAL
+    // =========================================================================
+    function openProductModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      activeModalProduct = product;
+      activeModalQty = 1;
+
+      document.getElementById('modal-art-container').innerHTML = getCandleArtworkSVG(product.art, true);
+      document.getElementById('modal-category').textContent = product.category;
+      document.getElementById('modal-spec').textContent = product.spec || 'Pure Soy • Cotton Wick';
+      document.getElementById('modal-title').textContent = product.name;
+      document.getElementById('modal-price').textContent = `₹${product.price}`;
+      document.getElementById('modal-desc').textContent = product.description;
+      document.getElementById('modal-wax-info').textContent = product.waxType || '100% Pure Soy Wax';
+      updateModalQtyDisplay();
+
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+      activeModalProduct = null;
+    }
+
+    function changeModalQty(delta) {
+      activeModalQty = Math.max(1, activeModalQty + delta);
+      updateModalQtyDisplay();
+    }
+
+    function updateModalQtyDisplay() {
+      if (!activeModalProduct) return;
+      document.getElementById('modal-qty').textContent = activeModalQty;
+      const total = activeModalProduct.price * activeModalQty;
+      document.getElementById('modal-add-btn').textContent = `Add to Order • ₹${total}`;
+    }
+
+    function addModalItemToCart() {
+      if (!activeModalProduct) return;
+      updateCartItem(activeModalProduct.id, activeModalQty);
+      closeProductModal();
+    }
+
+    // =========================================================================
+    // 7. CART MANAGEMENT & WHATSAPP CHECKOUT
+    // =========================================================================
+    function updateCartItem(productId, delta) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const current = cart[productId] || 0;
+      const next = current + delta;
+
+      if (next <= 0) {
+        delete cart[productId];
+        showToast(`Removed ${product.name}`);
+      } else {
+        cart[productId] = next;
+        if (delta > 0) {
+          showToast(`Added ${product.name} (${next})`);
+        }
+      }
+
+      saveCartToStorage();
+      renderProducts();
+      updateCartUI();
+      if (!document.getElementById('cart-modal').classList.contains('hidden')) {
+        renderCartDrawer();
+      }
+    }
+
+    function getCartTotals() {
+      let count = 0;
+      let total = 0;
+      Object.entries(cart).forEach(([id, qty]) => {
+        const prod = products.find(p => p.id === id);
+        if (prod && qty > 0) {
+          count += qty;
+          total += prod.price * qty;
+        }
+      });
+      return { count, total };
+    }
+
+    function updateCartUI() {
+      const { count, total } = getCartTotals();
+      document.getElementById('cart-badge-count').textContent = count;
+      document.getElementById('cart-bar-total').textContent = `₹${total}`;
+      document.getElementById('cart-bar-subtitle').textContent =
+        count > 0
+          ? `${count} ${count === 1 ? 'candle' : 'candles'} selected • Tap to order`
+          : 'Tap to view order details';
+    }
+
+    function openCartModal() {
+      renderCartDrawer();
+      document.getElementById('cart-modal').classList.remove('hidden');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cart-modal').classList.add('hidden');
+    }
+
+    function renderCartDrawer() {
+      const container = document.getElementById('cart-items-container');
+      const summaryBox = document.getElementById('cart-summary-box');
+      const formBox = document.getElementById('checkout-form-box');
+      const footerActions = document.getElementById('cart-footer-actions');
+
+      const entries = Object.entries(cart)
+        .map(([id, qty]) => ({ product: products.find(p => p.id === id), qty }))
+        .filter(entry => entry.product && entry.qty > 0);
+
+      if (entries.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4 bg-white rounded-2xl border border-amberGold/20">
+            <p class="font-serif text-lg font-bold text-charcoal mb-1">Your order bag is empty</p>
+            <p class="text-xs text-warmGray mb-4">Add handcrafted soy or gel candles from the catalog to place a WhatsApp order.</p>
+            <button
+              type="button"
+              onclick="closeCartModal()"
+              class="px-5 py-2.5 rounded-xl bg-terracotta text-white text-xs font-semibold"
+            >
+              Browse Candles
+            </button>
+          </div>
+        `;
+        summaryBox.classList.add('hidden');
+        formBox.classList.add('hidden');
+        footerActions.classList.add('hidden');
+        return;
+      }
+
+      container.innerHTML = entries.map(({ product, qty }) => `
+        <div class="bg-white p-3 rounded-2xl border border-amberGold/20 flex items-center justify-between gap-3">
+          <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0">
+            ${getCandleArtworkSVG(product.art, false)}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h5 class="font-serif text-sm font-bold text-charcoal truncate">${product.name}</h5>
+            <p class="text-xs text-warmGray">₹${product.price} × ${qty} = <span class="font-bold text-terracotta">₹${product.price * qty}</span></p>
+          </div>
+          <div class="flex items-center bg-sand rounded-xl p-0.5 shrink-0">
+            <button type="button" onclick="updateCartItem('${product.id}', -1)" class="w-7 h-7 rounded-lg font-bold text-charcoal hover:bg-white">−</button>
+            <span class="px-2 text-xs font-bold">${qty}</span>
+            <button type="button" onclick="updateCartItem('${product.id}', 1)" class="w-7 h-7 rounded-lg font-bold text-charcoal hover:bg-white">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const { total } = getCartTotals();
+      document.getElementById('summary-subtotal').textContent = `₹${total}`;
+      document.getElementById('summary-total').textContent = `₹${total}`;
+
+      summaryBox.classList.remove('hidden');
+      formBox.classList.remove('hidden');
+      footerActions.classList.remove('hidden');
+    }
+
+    function buildWhatsAppOrderMessage() {
+      const name = document.getElementById('cust-name').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+      const note = document.getElementById('cust-note').value.trim();
+
+      if (!name || !phone || !address) {
+        showToast('Please enter Name, Phone & Delivery Address');
+        return null;
+      }
+
+      const entries = Object.entries(cart)
+        .map(([id, qty]) => ({ product: products.find(p => p.id === id), qty }))
+        .filter(entry => entry.product && entry.qty > 0);
+
+      if (entries.length === 0) {
+        showToast('Your cart is empty');
+        return null;
+      }
+
+      const { total } = getCartTotals();
+      const lines = [
+        `🕯️ *New Order — Diyan's Candle Co.*`,
+        `────────────────────`,
+        ...entries.map(
+          ({ product, qty }, idx) =>
+            `${idx + 1}. *${product.name}*\n   Qty: ${qty} × ₹${product.price} = ₹${product.price * qty}`
+        ),
+        `────────────────────`,
+        `*Total Amount: ₹${total}*`,
+        ``,
+        `👤 *Customer Details:*`,
+        `• Name: ${name}`,
+        `• Phone: ${phone}`,
+        `• Address: ${address}`,
+        ...(note ? [`• Note: ${note}`] : []),
+        ``,
+        `Please confirm availability & payment details. Thank you!`
+      ];
+
+      return lines.join('\n');
+    }
+
+    function sendOrderOnWhatsApp() {
+      const message = buildWhatsAppOrderMessage();
+      if (!message) return;
+
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      showToast('Opening WhatsApp with your order...');
+    }
+
+    function copyOrderSummary() {
+      const message = buildWhatsAppOrderMessage();
+      if (!message) return;
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = message;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Order summary copied! Paste in WhatsApp.');
+      } catch (err) {
+        showToast('Unable to copy text automatically.');
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    // =========================================================================
+    // 8. ADMIN / QUICK PRODUCT MANAGER MODE
+    // =========================================================================
+    function toggleAdminMode() {
+      isAdminMode = !isAdminMode;
+      const panel = document.getElementById('admin-panel');
+      const btn = document.getElementById('toggle-admin-btn');
+      const label = document.getElementById('admin-btn-label');
+
+      if (isAdminMode) {
+        panel.classList.remove('hidden');
+        btn.classList.add('bg-terracotta', 'text-white');
+        label.textContent = 'Done';
+        showToast('Catalog Manager Enabled');
+      } else {
+        panel.classList.add('hidden');
+        btn.classList.remove('bg-terracotta', 'text-white');
+        label.textContent = 'Manage';
+        resetProductForm();
+      }
+      renderProducts();
+    }
+
+    function handleSaveProduct(event) {
+      event.preventDefault();
+      const editId = document.getElementById('edit-product-id').value;
+      const name = document.getElementById('prod-name').value.trim();
+      const category = document.getElementById('prod-category').value;
+      const price = parseInt(document.getElementById('prod-price').value, 10);
+      const art = document.getElementById('prod-art').value;
+      const spec = document.getElementById('prod-spec').value.trim() || 'Pure Soy • Cotton Wick';
+      const description = document.getElementById('prod-desc').value.trim();
+
+      if (!name || isNaN(price) || price <= 0) {
+        showToast('Please enter valid candle name & price');
+        return;
+      }
+
+      if (editId) {
+        const index = products.findIndex(p => p.id === editId);
+        if (index !== -1) {
+          products[index] = {
+            ...products[index],
+            name,
+            category,
+            price,
+            art,
+            spec,
+            description
+          };
+          showToast('Candle updated!');
+        }
+      } else {
+        const newProduct = {
+          id: 'candle-' + Date.now(),
+          name,
+          category,
+          price,
+          art,
+          spec,
+          waxType: '100% Pure Soy Wax',
+          description
+        };
+        products.unshift(newProduct);
+        showToast('New candle added to catalog!');
+      }
+
+      saveProductsToStorage();
+      resetProductForm();
+      renderProducts();
+      updateCartUI();
+    }
+
+    function editProduct(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      document.getElementById('edit-product-id').value = product.id;
+      document.getElementById('prod-name').value = product.name;
+      document.getElementById('prod-category').value = product.category;
+      document.getElementById('prod-price').value = product.price;
+      document.getElementById('prod-art').value = product.art || 'jar';
+      document.getElementById('prod-spec').value = product.spec || 'Pure Soy • Cotton Wick';
+      document.getElementById('prod-desc').value = product.description;
+
+      document.getElementById('save-prod-btn').textContent = 'Save Changes';
+      document.getElementById('cancel-edit-btn').classList.remove('hidden');
+      document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deleteProduct(productId) {
+      products = products.filter(p => p.id !== productId);
+      delete cart[productId];
+      saveProductsToStorage();
+      saveCartToStorage();
+      renderProducts();
+      updateCartUI();
+      showToast('Candle removed from catalog');
+    }
+
+    function resetProductForm() {
+      document.getElementById('product-form').reset();
+      document.getElementById('edit-product-id').value = '';
+      document.getElementById('prod-spec').value = 'Pure Soy • Cotton Wick';
+      document.getElementById('save-prod-btn').textContent = '+ Add Candle to Catalog';
+      document.getElementById('cancel-edit-btn').classList.add('hidden');
+    }
+
+    function resetDefaultProducts() {
+      products = [...DEFAULT_PRODUCTS];
+      saveProductsToStorage();
+      resetProductForm();
+      renderProducts();
+      updateCartUI();
+      showToast('Default candle catalog restored');
+    }
+
+    // Start app on load
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
+```

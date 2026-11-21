@@ -1,0 +1,6 @@
+{
+  "name": "Diyan's Candle Co.",
+  "description": "Handcrafted Pure Soy & Gel Wax Candles shopping app with custom catalog manager, persistent cart, and direct WhatsApp ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
